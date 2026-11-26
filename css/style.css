@@ -135,10 +135,48 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
     background: rgba(18, 18, 18, 0.8);
     backdrop-filter: blur(12px);
     padding: 14px 24px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.searchBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #242424;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    padding: 8px 16px;
+    flex: 1;
+    max-width: 420px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.searchBar:focus-within {
+    background-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.searchBar img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.75;
+}
+
+.searchBar input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    width: 100%;
+}
+
+.searchBar input::placeholder {
+    color: var(--text-secondary);
 }
 
 .spotifyPlaylists {
