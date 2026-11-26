@@ -70,6 +70,11 @@ const playMusic = (track, pause = false) => {
 
     document.querySelector(".songinfo").innerHTML = track;
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
+
+    const activeIndex = songs.indexOf(track);
+    Array.from(document.querySelectorAll(".songList ul li")).forEach((li, idx) => {
+        li.classList.toggle("active", idx === activeIndex);
+    });
 }
 
 async function displayAlbums() {

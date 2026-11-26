@@ -26,7 +26,7 @@
 }
 
 .rounded {
-    border: radius 7px;
+    border-radius: 10px;
 }
 
 .m-1 {
