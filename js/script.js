@@ -21,7 +21,7 @@ function secondsToMinutesSeconds(seconds) {
 
 async function loadManifest() {
     if (!songsManifest) {
-        const res = await fetch("songs/manifest.json");
+        const res = await fetch("songs/manifest.json?v=3");
         songsManifest = await res.json();
     }
     return songsManifest;
