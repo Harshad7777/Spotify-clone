@@ -37,6 +37,13 @@ body {
     list-style: none;
     padding-top: 14px;
     font-weight: bold;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.home ul li:hover {
+    color: #ffffff;
 }
 
 .heading {
@@ -57,17 +64,18 @@ body {
 .library {
     min-height: 80vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .footer {
     display: flex;
+    flex-wrap: wrap;
     font-size: 10px;
     color: grey;
     gap: 13px;
-    position: absolute;
-    bottom: 0;
-    padding: 10px 0;
-
+    margin-top: auto;
+    padding: 14px 12px 10px;
 }
 
 .footer a {
@@ -219,6 +227,12 @@ body {
     gap: 14px;
 }
 
+.songList {
+    flex: 1;
+    max-height: 55vh;
+    overflow-y: auto;
+}
+
 .songList ul {
     padding: 0 12px;
 }
@@ -227,13 +241,19 @@ body {
     list-style-type: decimal;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 12px;
     cursor: pointer;
-    padding: 12px 0;
-    border: 1px solid rgba(146, 143, 143, 0.491);
-    margin: 12px 0;
-    padding: 13px;
-    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.songList ul li:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.28);
 }
 
 .songList .info {
@@ -242,7 +262,7 @@ body {
 }
 
 .info div {
-    word-break: break-all;
+    word-break: break-word;
 }
 
 .playnow {
