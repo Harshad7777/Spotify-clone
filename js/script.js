@@ -3,7 +3,7 @@ let currentSong = new Audio();
 let songs = [];
 let currFolder;
 let songsManifest = null;
-let currentTrack = "";
+let currentTrack = null;
 
 function secondsToMinutesSeconds(seconds) {
     if (isNaN(seconds) || seconds < 0) {
@@ -27,6 +27,35 @@ async function loadManifest() {
     return songsManifest;
 }
 
+function getOrCreateSpotifyEmbed() {
+    let embed = document.getElementById("spotifyEmbed");
+    if (!embed) {
+        embed = document.createElement("div");
+        embed.id = "spotifyEmbed";
+        embed.style.display = "none";
+        document.querySelector(".playbar").appendChild(embed);
+    }
+    return embed;
+}
+
+function setSpotifyEmbedMode(enabled, track = null) {
+    const embed = getOrCreateSpotifyEmbed();
+    const abovebar = document.querySelector(".abovebar");
+    const seekbar = document.querySelector(".seekbar");
+
+    if (enabled && track) {
+        abovebar.style.display = "none";
+        seekbar.style.display = "none";
+        embed.style.display = "block";
+        embed.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${track.id}?utm_source=generator&theme=0" width="100%" height="80" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
+    } else {
+        embed.style.display = "none";
+        embed.innerHTML = "";
+        abovebar.style.display = "flex";
+        seekbar.style.display = "block";
+    }
+}
+
 async function getSongs(folder) {
     currFolder = folder;
     const albumName = folder.replace(/^songs\//, "");
@@ -37,11 +66,17 @@ async function getSongs(folder) {
     let songUL = document.querySelector(".songList").getElementsByTagName("ul")[0];
     songUL.innerHTML = "";
     for (const song of songs) {
-        songUL.innerHTML = songUL.innerHTML + `<li><img class="invert"
-        width="34" src="img/music.svg" alt="">
+        const isSpotify = typeof song === "object" && song !== null;
+        const title = isSpotify ? song.title : song;
+        const subtitle = isSpotify ? "Spotify" : "Harshad";
+        const iconHtml = isSpotify && song.cover
+            ? `<img class="song-thumb" src="${song.cover}" alt="" loading="lazy">`
+            : `<img class="invert" width="34" src="img/music.svg" alt="">`;
+
+        songUL.innerHTML = songUL.innerHTML + `<li>${iconHtml}
               <div class="info">
-                <div> ${song}</div>
-                <div>Harshad</div>
+                <div> ${title}</div>
+                <div>${subtitle}</div>
               </div>
               <div class="playnow">
                 <span>Play Now</span>
@@ -61,6 +96,26 @@ async function getSongs(folder) {
 const playMusic = (track, pause = false) => {
     if (!track) return;
     currentTrack = track;
+
+    const activeIndex = songs.indexOf(track);
+    Array.from(document.querySelectorAll(".songList ul li")).forEach((li, idx) => {
+        li.classList.toggle("active", idx === activeIndex);
+    });
+
+    if (typeof track === "object" && track !== null) {
+        currentSong.pause();
+        play.src = "img/Play.svg";
+        document.querySelector(".songinfo").innerHTML = track.title;
+        document.querySelector(".songtime").innerHTML = "Spotify";
+        if (!pause) {
+            setSpotifyEmbedMode(true, track);
+        } else {
+            setSpotifyEmbedMode(false);
+        }
+        return;
+    }
+
+    setSpotifyEmbedMode(false);
     const folderPath = currFolder.split("/").map(encodeURIComponent).join("/");
     currentSong.src = `${folderPath}/${encodeURIComponent(track)}`;
     if (!pause) {
@@ -70,11 +125,6 @@ const playMusic = (track, pause = false) => {
 
     document.querySelector(".songinfo").innerHTML = track;
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
-
-    const activeIndex = songs.indexOf(track);
-    Array.from(document.querySelectorAll(".songList ul li")).forEach((li, idx) => {
-        li.classList.toggle("active", idx === activeIndex);
-    });
 }
 
 async function displayAlbums() {
@@ -111,14 +161,20 @@ async function displayAlbums() {
 
 async function main() {
     //get the list of all the songs 
-    await getSongs("songs/ncs");
-    playMusic(songs[0], true);
+    await getSongs("songs/F");
+    if (songs.length > 0) {
+        playMusic(songs[0], true);
+    }
 
     // Display all the albums on the page
     await displayAlbums();
 
     //attach an event listener to the play button
     play.addEventListener("click", () => {
+        if (typeof currentTrack === "object" && currentTrack !== null) {
+            setSpotifyEmbedMode(true, currentTrack);
+            return;
+        }
         if (currentSong.paused) {
             currentSong.play();
             play.src = "img/pause.svg";
